@@ -1,12 +1,13 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from .models import Bd, Rubric
+from .models import Bd, Rubric, GoiTeen
 from .forms import BbForm
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 
 
 class BbIndexView(ListView):
@@ -21,6 +22,7 @@ class BbIndexView(ListView):
         context['rubrics'] = Rubric.objects.all()
         context['selected_rubric'] = None
         return context
+
 
 class BbByRubricView(ListView):
     model = Bd
@@ -61,3 +63,44 @@ class HelloView(View):
 
     def post(self, request):
         return redirect('index.html')
+
+
+class HomePageView(TemplateView):
+    template_name = 'bboard/index.html'
+
+
+class AboutPageView(TemplateView):
+    template_name = 'bboard/about.html'
+
+
+class DataPageView(TemplateView):
+    template_name = 'bboard/data.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['data'] = [
+            {'name': 'Some name1', 'worth': '324435345'},
+            {'name': 'Some name2', 'worth': '436743534'}
+        ]
+        return context
+
+
+def goiteen_list_view(request):
+    item_list = Bd.objects.all().order_by('-published')
+
+    paginator = Paginator('item_list', 2)
+    page_num = request.GET.get('page', 1)
+
+    try:
+        page = paginator.get_page(page_num)
+    except PageNotAnInteger:
+        page = paginator.get_page(1)
+    except EmptyPage:
+        page = paginator.get_page(paginator.num_pages)
+
+    contex = {
+        'page': page,
+        'GoiTeen': page.object_list
+    }
+
+    return render(request, 'bboard/item_list.html', contex)

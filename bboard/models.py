@@ -20,3 +20,15 @@ class Bd(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.rubric.name})"
+
+
+class GoiTeen(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField(blank=True)
+    published = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-published']

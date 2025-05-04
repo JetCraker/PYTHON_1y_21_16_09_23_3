@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Дошка Оголошень{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'bboard/css/main.css'%}" type="text/css">
+</head>
+<body>
+    <div class="container">
+        {% include 'bboard/partials/nav-bar.html' %}
+        <hr>
+        {% block pagecontent %}
+        {% endblock %}
+    </div>
+</body>
+</html>
