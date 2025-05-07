@@ -66,15 +66,15 @@ class HelloView(View):
 
 
 class HomePageView(TemplateView):
-    template_name = 'bboard/index.html'
+    template_name = 'index2.html'
 
 
 class AboutPageView(TemplateView):
-    template_name = 'bboard/about.html'
+    template_name = 'about.html'
 
 
 class DataPageView(TemplateView):
-    template_name = 'bboard/data.html'
+    template_name = 'data.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -86,7 +86,7 @@ class DataPageView(TemplateView):
 
 
 def goiteen_list_view(request):
-    item_list = Bd.objects.all().order_by('-published')
+    item_list = Bd.objects.all().order_by('-created_at')
 
     paginator = Paginator('item_list', 2)
     page_num = request.GET.get('page', 1)
@@ -103,4 +103,4 @@ def goiteen_list_view(request):
         'GoiTeen': page.object_list
     }
 
-    return render(request, 'bboard/item_list.html', contex)
+    return render(request, 'item_list.html', contex)

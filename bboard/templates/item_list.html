@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}Список Оголошень{% endblock %}
+
+{% block pagecontent %}
+    <h2>Список Оголошень</h2>
+
+    {% for item in GoITeens %}
+        <div>
+            <p><small>{{ item.published|date:"d.m.Y H:i" }}</small></p>
+            <h3>{{ item.title }}</h3>
+            {# <a href="{% url 'bboard:detail' item.pk %}">Детальніше</a> #}
+            <hr>
+        </div>
+    {% empty %}
+        <p>Немає оголошень.</p>
+    {% endfor %}
+    {# Навігація пагінації #}
+    <div class="pagination">
+        {% if page.has_previous %}
+            <a href="?page={{ page.previous_page_number }}">&lt;</a> &nbsp; &nbsp; | &nbsp; &nbsp;
+        {% endif %}
+        Частина №{{ page.number }} з {{ page.paginator.num_pages }}
+        {% if page.has_next %}
+            &nbsp;&nbsp;|&nbsp;&nbsp; <a href="?page={{ page.next_page_number }}">&gt;</a>
+        {% endif %}
+    </div>
+{% endblock %}
