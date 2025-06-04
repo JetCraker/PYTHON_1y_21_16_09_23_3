@@ -1,0 +1,22 @@
+{% extends 'base.html '%}
+{% load humanize %}
+
+{% block title %}- Дошка оголошень {% endblock %}
+
+{% block pagecontent %}
+    <div class="table-div">
+        <table>
+            <thead>...</thead>
+            <tbody>
+                {% for celebrity in data%}
+                    <tr>
+                        <td>{{ celerity.name }}</td>
+                        <td>$ {{ celebrity.worth | intcomma }}</td>
+                    </tr>
+                    {% empty%}
+                <tr><td colspan="2">Немає даних.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

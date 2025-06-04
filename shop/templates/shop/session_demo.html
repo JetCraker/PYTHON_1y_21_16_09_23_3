@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Session_demo</title>
+</head>
+<body>
+    <h1>Session demo</h1>
+    <p>Лічильник переглядів: <strong> {{ view_count }}</strong></p>
+    <p>Результат тестовий cookie: <strong>{{ test_cookie }}</strong></p>
+
+    <p><a href="?flush=1">Очистити сесію</a></p>
+
+    <p><a href="{% url 'index' %}">Повернутися на головну</a></p>
+
+    <p><a href="?clear=1">Очистити дані сесії</a></p>
+</body>
+</html>

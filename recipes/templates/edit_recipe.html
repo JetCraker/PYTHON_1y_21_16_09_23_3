@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <title>Редагувати інґредієнти: {{ recipe.title }}</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 1em; }
+        th, td { border: 1px solid #ccc; padding: 0.5em; text-align: left; }
+        th { background: #f0f0f0; }
+        .actions { margin-top: 1em; }
+        .add-row { margin-bottom: 1em; }
+        .errorlist { color: red; list-style: none; padding-left: 0; }
+    </style>
+</head>
+<body>
+    <h1>Редагувати інґредієнти рецепта: {{ recipe.title }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Назва</th>
+                    <th>Кількість</th>
+                    <th>Видалити?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in formset.forms %}
+                    <tr>
+                        {{ form.id }}
+                        <td>
+                            {{ form.name.errors }}
+                            {{ form.name }}
+                        </td>
+                        <td>
+                            {{ form.quantity.errors }}
+                            {{ form.quantity }}
+                        </td>
+                        <td>
+                            {{ form.DELETE }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="actions">
+            <button type="submit">Зберегти зміни</button>
+            <a href="{% url 'recipe_detail' recipe.pk %}">Скасувати</a>
+        </div>
+    </form>
+</body>
+</html>

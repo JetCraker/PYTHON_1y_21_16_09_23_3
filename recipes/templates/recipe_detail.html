@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Рецепт</title>
+</head>
+<body>
+    <h1>{{ recipe.title }}</h1>
+    <h3>Інгередієнти:</h3>
+    <ul>
+        {% for ing in recipe.ingredients.all %}
+            <li>{{ ing.name }} - {{ ing.quantity }}</li>
+        {% empty%}
+         <li>Немає інгредієнтів</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'edit_recipe' recipe.pk %}">Редагувати інгредієнт</a>
+</body>
+</html>

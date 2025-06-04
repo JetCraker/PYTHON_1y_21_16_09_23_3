@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Додати оголошення</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css">
+</head>
+<body class="p-4 bg-light">
+<div class="container bg-white p-4 rounded shadow-sm">
+    <h1 class="mb-4">Додати оголошення</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+            <input type="text" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}"
+                   class="form-control {% if form.title.errors %}is-invalid{% endif %}"
+                   value="{{ form.title.value|default:'' }}">
+            {% if form.title.errors %}
+                <div class="invalid-feedback">
+                    {{ form.title.errors|striptags }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
+            <textarea name="{{ form.content.name }}" id="{{ form.content.id_for_label }}" rows="5"
+                      class="form-control {% if form.content.errors %}is-invalid{% endif %}">{{ form.content.value|default:'' }}</textarea>
+            {% if form.content.errors %}
+                <div class="invalid-feedback">
+                    {{ form.content.errors|striptags }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
+            <input type="number" step="0.01" name="{{ form.price.name }}" id="{{ form.price.id_for_label }}"
+                   class="form-control {% if form.price.errors %}is-invalid{% endif %}"
+                   value="{{ form.price.value|default:'' }}">
+            {% if form.price.errors %}
+                <div class="invalid-feedback">
+                    {{ form.price.errors|striptags }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.rubric.id_for_label }}" class="form-label">{{ form.rubric.label }}</label>
+            <select name="{{ form.rubric.name }}" id="{{ form.rubric.id_for_label }}"
+                    class="form-select {% if form.rubric.errors %}is-invalid{% endif %}">
+                <option value="">---------</option>
+                {% for value, text in form.rubric.field.choices %}
+                    {% if value %}
+                        <option value="{{ value }}" {% if form.rubric.value == value|stringformat:"s" %}selected{% endif %}>{{ text }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% if form.rubric.errors %}
+                <div class="invalid-feedback">
+                    {{ form.rubric.errors|striptags }}
+                </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-success">Зберегти</button>
+        <a href="{% url 'bboard:index' %}" class="btn btn-secondary">Назад до списку</a>
+    </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

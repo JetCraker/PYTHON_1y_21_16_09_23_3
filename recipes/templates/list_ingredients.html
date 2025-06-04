@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список інгредієнтів</title>
+</head>
+<body>
+    <h1>Інгредієнти</h1>
+    <ul>
+        {% for ing in ingredients %}
+            <li>{{ ing.name }} - {{ ing.quantity }}</li>
+        {% empty %}
+            <li>Немає інгредієнтів</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'add_ingredient' %}">Додати новий інгердієнт</a>
+</body>
+</html>

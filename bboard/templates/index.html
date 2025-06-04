@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Oголошення</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css">
+    <style>
+        .list-group-item.active a {
+            color: white;
+        }
+        .pagination {
+            margin-top: 2rem;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="p-4">
+<div class="container">
+    <h1 class="mb-4">Oголошення</h1>
+
+    <div class="row">
+        <div class="col-md-3">
+            <ul class="list-group mb-3">
+                <li class="list-group-item {% if not selected_rubric %}active{% endif %}">
+                    <a href="{% url 'bboard:index' %}" class="text-decoration-none">Усі</a>
+                </li>
+                {% for r in rubrics %}
+                <li class="list-group-item {% if selected_rubric and r.id == selected_rubric.id %}active{% endif %}">
+                    <a href="{% url 'bboard:by_rubric' r.id %}" class="text-decoration-none">{{ r.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            <a href="{% url 'bboard:add' %}" class="btn btn-primary mt-3">Додати</a>
+        </div>
+        <div class="col-md-9">
+    {% for bb in bbs %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ bb.title }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ bb.price }} ₴ — {{ bb.rubric.name }}</h6>
+            <p class="card-text">{{ bb.content|linebreaksbr }}</p>
+            <small class="text-muted">Опубліковано: {{ bb.created_at|date:'d.m.Y H:i' }}</small>
+        </div>
+    </div>
+    {% empty %}
+    <p>Оголошень немає.</p>
+    {% endfor %}
+
+    {% if is_paginated %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="Перша">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Попередня</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Перша">&laquo;</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">Попередня</span>
+                </li>
+            {% endif %}
+
+            {% for p in page_obj.paginator.page_range %}
+                {% if p == page_obj.number %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ p }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Наступна</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Остання">&raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Наступна</span>
+                </li>
+                 <li class="page-item disabled">
+                    <span class="page-link" aria-label="Остання">&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+    </div>
+</div>
+</body>
+</html>

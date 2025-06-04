@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Головна - Мій Магазин{% endblock title %}
+
+{% block content %}
+<h2>Товари</h2>
+<h3>Ви відвідали сторінку {{ counter }} разів.</h3>
+<ul>
+  {% for item in stuff_list %}
+    <li>
+      <h3>{{ item.stuff_name }}</h3>
+      <p>{{ item.stuff_desc }}</p>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock content%}

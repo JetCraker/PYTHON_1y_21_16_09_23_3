@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Вхід у систему</title>
+</head>
+<body>
+    <h2>Вхід</h2>
+    {% if massages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Увійти</button>
+    </form>
+
+    <p>Немає аккаунту? <a href="{% url 'register' %}">Зареєструватись</a></p>
+</body>
+</html>
