@@ -19,6 +19,13 @@
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="{% url 'stuff_list' %}">Товари</a>
                 <a class="nav-link" href="{% url 'add_stuff' %}">Додати товар</a>
+                
+                
+                {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'view_cart' %}">Кошик</a>
+                {% endif %}
+
+                
             </div>
         </div>
     </nav>
@@ -54,11 +61,16 @@
                         {% for i in "12345" %}
                             <span class="star {% if forloop.counter <= avg_rating %}filled{% endif %}">★</span>
                         {% endfor %}
-                        <span class="ms-2">({{ avg_rating|floatformat:1 }}) - {{ ratings.count }} відгук{{ ratings.count|pluralize:"ів" }}</span>
+                        <span class="ms-2">({{ avg_rating|floatformat:1 }}) - {{ rating.count }} відгук{{ rating.count|pluralize:"ів" }}</span>
                     {% endwith %}
                 </div>
                 
                 {% if user.is_authenticated %}
+
+                 <div class="mt-3">
+                    <a href="{% url 'add_to_cart' stuff.pk %}" class="btn btn-success btn-lg">Додати в кошик</a>
+                </div>
+
                 <div class="card mt-4">
                     <div class="card-header">
                         <h5>{% if user_rating %}Змінити рейтинг{% else %}Додати рейтинг{% endif %}</h5>
@@ -91,20 +103,20 @@
 
         <div class="mt-5">
             <h3>Відгуки</h3>
-            {% for rating in ratings %}
+            {% for rating_item in rating %}
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <strong>{{ rating.user.username }}</strong>
-                        <small class="text-muted">{{ rating.created_at|date:"d.m.Y H:i" }}</small>
+                        <strong>{{ rating_item.user.username }}</strong>
+                        <small class="text-muted">{{ rating_item.created_at|date:"d.m.Y H:i" }}</small>
                     </div>
                     <div class="star-rating">
                         {% for i in "12345" %}
-                            <span class="star {% if forloop.counter <= rating.stars %}filled{% endif %}">★</span>
+                            <span class="star {% if forloop.counter <= rating_item.stars %}filled{% endif %}">★</span>
                         {% endfor %}
                     </div>
-                    {% if rating.comment %}
-                    <p class="mt-2">{{ rating.comment }}</p>
+                    {% if rating_item.comment %}
+                    <p class="mt-2">{{ rating_item.comment }}</p>
                     {% endif %}
                 </div>
             </div>

@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Stuff
+from .models import Stuff, Bucket
 from django.contrib import messages
-from .forms import CustomUserCreationForm, StuffForm, RatingForm
+from .forms import CustomUserCreationForm, StuffForm, RatingForm, FeedBackForm
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail, BadHeaderError
 
 
 def index(request):
@@ -97,7 +98,6 @@ def session_demo(request):
 
     if 'clear' in request.GET:
         request.session.clear()
-        request.pop('view_count', None)
         return redirect('session_demo')
 
     request.session.set_test_cookie()
@@ -110,3 +110,94 @@ def session_demo(request):
 
     return render(request, 'shop/session_demo.html', context)
 
+
+@login_required
+def add_to_cart(request, stuff_id):
+    stuff = get_object_or_404(Stuff, pk=stuff_id)
+    bucket_item, created = Bucket.objects.get_or_create(
+        user = request.user,
+        stuff = stuff
+    )
+
+    if not created:
+        bucket_item.count += 1
+        bucket_item.save()
+    messages.success(request, f'Товар "{stuff.stuff_name}" додано в кошик')
+    return redirect('view_cart')
+
+
+@login_required
+def view_cart(request):
+    items = Bucket.objects.filter(user=request.user).select_related('stuff')
+    total = sum(item.get_total_price() for item in items)
+    return render(request, 'shop/cart.html', {'items': items, 'total': total})
+
+
+@login_required
+def remove_from_cart(request, stuff_id):
+    bucket_item = get_object_or_404(Bucket, user=request.user, stuff_id=stuff_id)
+    bucket_item.delete()
+    messages.success(request, 'Товар видалено із кошика')
+    return redirect('view_cart')
+
+
+@login_required
+def update_cart(request, stuff_id):
+    if request.method == "POST":
+        bucket_item = get_object_or_404(Bucket, user=request.user, stuff_id=stuff_id)
+        count = request.POST.get('count', '1')
+
+        try:
+            count = int(count)
+        except (ValueError, TypeError):
+            messages.error(request, 'Неправильна кількість')
+            return redirect('view_cart')
+        
+        if count > 0:
+            bucket_item.count = count
+            bucket_item.save()
+            messages.success(request, 'Кількість оновлено')
+        elif count == 0:
+            bucket_item.delete()
+            messages.success(request, 'Товар видалено із кошика!')
+        else:
+            messages.error(request, 'Кількість не може бути від\'ємною')
+    
+    return redirect('view_cart')
+
+
+def send_feedback(request):
+    if request.method == "POST":
+        form = FeedBackForm(request.POST)
+        if form.is_valid():
+            subject =  form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            from_email = form.cleaned_data['from_email']
+
+            try:
+                send_mail(
+                    subject=f"[Feedback] {subject}",
+                    message=f"[Повідомлення від]: {from_email}\n\n{message}",
+                    from_email="jetcraker@ukr.net",
+                    recipient_list=["jetcraker@ukr.net"],
+                    fail_silently=False,
+                    html_message=f'''
+                        <div>
+                        <p>Повідомлення від <strong>{from_email}</strong></p>
+                        <p><strong>Тема:</strong> {subject}</p>
+                        <hr>
+                        <p>{message}</p>
+                        </div>
+                    '''
+                )
+                messages.success(request, 'Ваше повідомлення було надіслано. Дякуємо за ваш відгук!')
+                return redirect('stuff_list')
+            except BadHeaderError:
+                messages.error(request, 'Недопустимий заголовок!')
+            except Exception as e:
+                messages.error(request, f'Some error: {e}')
+        else:
+            messages.error(request, 'Перевірте правильність заповнення форми!')
+    else:
+        form = FeedBackForm()
+    return render(request, 'shop/feedback.html', {'form': form})

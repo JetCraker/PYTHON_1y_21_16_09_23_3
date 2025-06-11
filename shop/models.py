@@ -33,3 +33,20 @@ class Rating(models.Model):
 
     def __str__(self):
         return f'{self.stuff.stuff_name} - {self.stars} зірочок'
+
+
+class Bucket(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Користувач')
+    stuff = models.ForeignKey(Stuff, on_delete=models.CASCADE, verbose_name='Товар')
+    count = models.PositiveIntegerField(default=1, verbose_name='Кількість')
+    added_at = models.DateTimeField(auto_now_add=True, verbose_name='Додано')
+
+    class Meta:
+        unique_together = ('user', 'stuff')
+        verbose_name = 'Кошик'
+
+    def get_total_price(self):
+        return self.stuff.price * self.count
+
+    def __str__(self):
+        return f'{self.user.username} - {self.stuff.stuff_name} ({self.count})'

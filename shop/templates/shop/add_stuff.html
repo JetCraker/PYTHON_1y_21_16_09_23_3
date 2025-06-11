@@ -12,6 +12,13 @@
             <a class="navbar-brand" href="{% url 'index' %}">Магазин</a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="{% url 'stuff_list' %}">Товари</a>
+                
+                
+                {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'view_cart' %}">Кошик</a>
+                {% endif %}
+
+                
                 <a class="nav-link" href="{% url 'index' %}">Головна</a>
             </div>
         </div>

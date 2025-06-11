@@ -36,3 +36,20 @@ class RatingForm(forms.ModelForm):
         widgets = {
             'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Залиште свій коментар'})
         }
+
+
+class FeedBackForm(forms.Form):
+    subject = forms.CharField(
+        max_length=200,
+        label='Topic',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    from_email = forms.EmailField(
+        label = 'Your Email',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    message = forms.CharField(
+        label='Повідомлення',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'rows': 5})
+    )
