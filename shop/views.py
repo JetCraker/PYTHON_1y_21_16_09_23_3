@@ -1,9 +1,13 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Stuff, Bucket
+from django.views.decorators.http import require_http_methods
+from .models import Stuff, Bucket, Order, OrderItem
 from django.contrib import messages
 from .forms import CustomUserCreationForm, StuffForm, RatingForm, FeedBackForm
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail, BadHeaderError
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 
 
 def index(request):
@@ -201,3 +205,105 @@ def send_feedback(request):
     else:
         form = FeedBackForm()
     return render(request, 'shop/feedback.html', {'form': form})
+
+
+@login_required
+@require_http_methods(['GET'])
+def order_history(request):
+    user_id = request.user.id
+    cache_key = f'order_history_{user_id}'
+
+    data = cache.get(cache_key)
+
+    if not data:
+        orders = Order.objects.filter(user_id=user_id).order_by('-created_at')
+
+        data = [{
+            "date": order.created_at.strftime('%Y-%m-%d %H:%M'),
+            "status": order.status,
+            "total": order.total,
+            "shipping_address": order.shipping_address,
+            "created_at": order.created_at,
+            "updated_at": order.updated_at
+        } for order in orders
+        ]
+
+        cache.set(cache_key, data, timeout=60*10)
+    return JsonResponse({'orders': data})
+
+
+@login_required
+@require_http_methods(['GET'])
+def order_detail(request, order_id):
+
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    cache_key = f'order_detail_{order_id}'
+
+    data = cache.get_or_set(
+        cache_key,
+        lambda: {
+            "id": order.id,
+            "date": order.created_at.strftime("%Y-%m-%d %H:%M"),
+            "status": order.status,
+            "shipping_address": order.shipping_address,
+            "items": [
+                {
+                    "name": item.stuff.stuff_name,
+                    "qty": item.quantity,
+                    "price": float(item.price),
+                    "total": float(item.get_total_price()),
+                }
+                for item in order.items.select_related('stuff')
+            ],
+            "total": float(order.total)
+        },
+        timeout=60 * 15
+    )
+
+    return JsonResponse(data)
+
+
+@cache_page(60 * 5)
+@login_required
+def orders_page(request):
+
+    context = {
+        "page_title": "Історія замовлень"
+    }
+
+    return render(request, 'shop/orders.html', context)
+
+
+def create_test_order(request):
+    if request.user.is_authenticated:
+        order = Order.objects.create(
+            user=request.user,
+            total=299.99,
+            status='delivered',
+            shipping_address='Some test address'
+        )
+
+        stuff_items = Stuff.objects.all()[:3]
+        for i, stuff in enumerate(stuff_items, 1):
+            OrderItem.objects.create(
+                order=order,
+                stuff=stuff,
+                quantity=i,
+                price=stuff.price
+            )
+
+        total = sum(item.get_total_price() for item in order.items.all())
+        order.total = total
+        order.save()
+
+        messages.success(request, f'Тестове замовлення #{order.id} створено')
+
+        cache_key = f'order_history_{request.user.id}'
+        cache.delete(cache_key)
+
+    return redirect('orders_page')
+
+
+def test_orders_api(request):
+    return render(request, 'shop/test_orders_api.html')

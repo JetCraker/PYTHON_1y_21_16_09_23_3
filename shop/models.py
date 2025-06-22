@@ -50,3 +50,43 @@ class Bucket(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.stuff.stuff_name} ({self.count})'
+
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Очікує'),
+        ('processing', 'В обробці'),
+        ('shipped', 'Відправлено'),
+        ('delivered', 'Доставлено'),
+        ('canceled', 'Скасовано')
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Користувач')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата створення')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата оновлення')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='Статус')
+    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Загальна ціна')
+    shipping_address = models.TextField(verbose_name='Адреса доставки', blank=True)
+
+    class Meta:
+        verbose_name = 'Замовлення'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Замовлення {self.id}, від {self.user}'
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE, verbose_name='Замовлення')
+    stuff = models.ForeignKey(Stuff, on_delete=models.CASCADE, verbose_name='Товар')
+    quantity = models.PositiveIntegerField(verbose_name='Кількість')
+    price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Ціна за одиницю')
+
+    class Meta:
+        verbose_name = 'Товар для замовлення'
+
+    def get_total_price(self):
+        return self.quantity * self.price
+
+    def __str__(self):
+        return f'{self.stuff.stuff_name} x {self.quantity}'
