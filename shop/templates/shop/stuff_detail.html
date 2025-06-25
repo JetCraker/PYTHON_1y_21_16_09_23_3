@@ -61,7 +61,7 @@
                         {% for i in "12345" %}
                             <span class="star {% if forloop.counter <= avg_rating %}filled{% endif %}">★</span>
                         {% endfor %}
-                        <span class="ms-2">({{ avg_rating|floatformat:1 }}) - {{ rating.count }} відгук{{ rating.count|pluralize:"ів" }}</span>
+                        <span class="ms-2">({{ avg_rating|floatformat:1 }}) - {{ ratings.count }} відгук{{ ratings.count|pluralize:"ів" }}</span>
                     {% endwith %}
                 </div>
                 
@@ -92,6 +92,14 @@
                                 {{ form.comment.label_tag }}
                                 {{ form.comment }}
                             </div>
+
+                            <div class="mb-3">
+                                {{ form.captcha.label_tag }}
+                                {{ form.captcha }}
+                                {% for error in form.captcha.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
                             
                             <button type="submit" class="btn btn-primary">{% if user_rating %}Оновити{% else %}Додати{% endif %} рейтинг</button>
                         </form>
@@ -103,7 +111,7 @@
 
         <div class="mt-5">
             <h3>Відгуки</h3>
-            {% for rating_item in rating %}
+            {% for rating_item in ratings %}
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">

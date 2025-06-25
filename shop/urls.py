@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
 
@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/orders/detail/<int:order_id>/', views.order_detail, name='order_detail'),
     path('create-test-order/', views.create_test_order, name='create_test_order'),
     path('test-orders-api/', views.test_orders_api, name='test_orders_api'),
+    path('captcha/', include('captcha.urls'))
 ]

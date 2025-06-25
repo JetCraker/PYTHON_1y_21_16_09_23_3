@@ -60,19 +60,19 @@ def add_stuff(request):
 
 def stuff_detail(request, pk):
     stuff = get_object_or_404(Stuff, pk=pk)
-    rating = stuff.rating.all().order_by('-created_at')
+    ratings = stuff.rating.all().order_by('-created_at')
     user_rating = None
 
     if request.user.is_authenticated:
-        user_rating = rating.filter(user=request.user).first()
+        user_rating = ratings.filter(user=request.user).first()
 
     if request.method == "POST" and request.user.is_authenticated:
         form = RatingForm(request.POST, instance=user_rating)
         if form.is_valid():
-            rating = form.save(commit=False)
-            rating.stuff = stuff
-            rating.user = request.user
-            rating.save()
+            new_rating = form.save(commit=False)
+            new_rating.stuff = stuff
+            new_rating.user = request.user
+            new_rating.save()
             messages.success(request, 'Ваш рейтинг додано!')
 
     else:
@@ -80,7 +80,7 @@ def stuff_detail(request, pk):
 
     context = {
         'stuff': stuff,
-        'rating': rating,
+        'rating': ratings,
         'form': form,
         'user_rating': user_rating,
     }

@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Stuff, Rating
+from captcha.fields import CaptchaField
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -30,9 +31,11 @@ class StuffForm(forms.ModelForm):
 
 
 class RatingForm(forms.ModelForm):
+    captcha = CaptchaField()
+
     class Meta:
         model = Rating
-        fields = ['stars', 'comment']
+        fields = ['stars', 'comment', 'captcha']
         widgets = {
             'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Залиште свій коментар'})
         }
