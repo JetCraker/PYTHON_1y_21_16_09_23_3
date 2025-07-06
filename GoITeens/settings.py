@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
+import datetime
 
 
 load_dotenv()
@@ -35,6 +37,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework_simplejwt',
+    'api',
+    'rest_framework',
     'captcha',
     'shop',
     'recipes',
@@ -49,6 +54,23 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'debug_toolbar'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES':
+        ['rest_framework.permissions.IsAuthenticated'], #rest_framework.permissions.AllowAny - щоб можна було доступитися будь-кому
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ]
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=10),
+    "ROTATE_REFRESH_TOKEN": True,
+    "BLACKLIST_REFRESH_TOKEN": True
+}
 
 MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
