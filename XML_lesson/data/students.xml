@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<students>
+    <stundent id="stu001">
+        <fist_name>Igor</fist_name>
+        <last_name>Petrenko</last_name>
+        <enrollment_date>2025-07-16</enrollment_date>
+    </stundent>
+    <stundent id="stu002">
+        <fist_name>Andrii</fist_name>
+        <last_name>Petruchenko</last_name>
+        <enrollment_date>2025-08-02</enrollment_date>
+    </stundent>
+    <stundent id="stu003">
+        <fist_name>Oksana</fist_name>
+        <last_name>Melnyk</last_name>
+        <enrollment_date>2025-06-29</enrollment_date>
+    </stundent>
+</students>

@@ -27,5 +27,8 @@ urlpatterns = [
     path('api/orders/detail/<int:order_id>/', views.order_detail, name='order_detail'),
     path('create-test-order/', views.create_test_order, name='create_test_order'),
     path('test-orders-api/', views.test_orders_api, name='test_orders_api'),
-    path('captcha/', include('captcha.urls'))
+    path('captcha/', include('captcha.urls')),
+
+    path('ajax-data/', views.ajax_data_view, name='ajax_data'),
+    path('ajax-example/', views.ajax_page_view, name='ajax_page')
 ]

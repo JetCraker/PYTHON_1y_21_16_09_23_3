@@ -37,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'XML_lesson',
     'rest_framework_simplejwt',
     'api',
     'rest_framework',

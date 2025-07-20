@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AJAX Example</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1>Ajax example</h1>
+  <button id="loadData">Завантажити дані</button>
+  <div id="result"></div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    console.log("JQuery version:", $.fn.jquery );
+    $('#loadData').click(function (e) {
+      e.preventDefault();
+
+      $.ajax({
+        url: "{% url 'ajax_data' %}",
+        type: "GET",
+        dataType: "json",
+
+        success: function (resp){
+          console.log("AJAX success", resp);
+          $('#result').text(resp.message + " o" + resp.timestamp);
+        },
+
+        error: function (xhr, status, err){
+          console.error('AJAX error', status, err);
+          $('#result').text("Сталася помилка:" + err);
+        }
+      })
+    })
+  })
+</script>
+</body>
+</html>

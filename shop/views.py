@@ -1,3 +1,5 @@
+import time
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
@@ -307,3 +309,17 @@ def create_test_order(request):
 
 def test_orders_api(request):
     return render(request, 'shop/test_orders_api.html')
+
+
+def ajax_data_view(request):
+    if request.method == "GET":
+        data = {
+            "message": "This is AJAX message",
+            "timestamp" : time.time()
+        }
+        return JsonResponse(data)
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+def ajax_page_view(request):
+    return render(request, 'ajax_example.html')

@@ -31,6 +31,7 @@ urlpatterns = [
     # path('', include('bboard.urls')),
     path('recipes/', include('recipes.urls')),
     path('api/', include('api.urls')),
+    path('XML/', include('XML_lesson.urls')),
 
 
     path('', include('shop.urls')),
