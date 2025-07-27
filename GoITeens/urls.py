@@ -32,6 +32,7 @@ urlpatterns = [
     path('recipes/', include('recipes.urls')),
     path('api/', include('api.urls')),
     path('XML/', include('XML_lesson.urls')),
+    path('TEST/', include('TEST.urls')),
 
 
     path('', include('shop.urls')),

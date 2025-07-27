@@ -31,12 +31,13 @@ SECRET_KEY = 'django-insecure-dcbrd#4+&uqjl+*w909sa8yrbg(-=v^-sl9yls%v$iw1dxv(-q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'TEST',
     'XML_lesson',
     'rest_framework_simplejwt',
     'api',

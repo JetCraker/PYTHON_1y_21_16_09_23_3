@@ -15,7 +15,7 @@ def import_students(request):
         root = tree.getroot()
 
         for stu_el in root.findall('student'):
-            first = stu_el.find('fist_name').text
+            first = stu_el.find('first_name').text
             ext_id = stu_el.get('id')
             last = stu_el.find('last_name').text
             enroll_text = stu_el.find('enrollment_date').text
@@ -32,7 +32,7 @@ def import_students(request):
 
         return HttpResponse("Імпорт студентів пройшов успішно")
     except Exception as e:
-        return HttpResponse(e)
+        return HttpResponse(str(e), status=500)
 
 def student_detail(request, pk):
     student = get_object_or_404(Student, pk=pk)
